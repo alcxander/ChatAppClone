@@ -1,9 +1,12 @@
+"use client"
+
 import { useMutation } from "convex/react";
 
 import { api } from "../../../../convex/_generated/api";
 import { v } from "convex/values";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { stat } from "fs";
 
 type RequestType = {name: string};
 type ResponseType = Id<"workspaces"> | null;
@@ -18,11 +21,12 @@ type Options = {
 export const useCreateWorkspace = () => {
     const [data, setData] = useState<ResponseType>(null);
     const [error, setError] = useState<Error | null>(null);
+    const [status, setStatus] = useState<"success" | "error" | "pending" | "settled" | null>(null);
 
-    const [isPending, setisPending] = useState(false);
-    const [isSuccess, setisSuccess] = useState(false);
-    const [isError, setisError] = useState(false);
-    const [isSettled, setisSettled] = useState(false);
+    const isPending = useMemo(() => status === "pending", [status]);
+    const isSuccess = useMemo(() => status === "success", [status]);
+    const isError = useMemo(() => status === "error", [status]);
+    const isSettled = useMemo(() => status === "settled", [status]);
 
     const mutation = useMutation(api.workspaces.create);
 
@@ -31,24 +35,20 @@ export const useCreateWorkspace = () => {
             setData(null);
             setError(null);
 
-            setisPending(true);
-
-            setisError(false);
-            setisSettled(false);
-            setisSuccess(false);
+            setStatus("pending");
 
             const response = await mutation(values);
             options?.onSuccess?.(response);
             return response;
         }catch(error){
+            setStatus("error");
             options?.onError?.(error as Error);
 
             if (options?.throwError){ //gives choice on whether or not to throw error so upstream they have more control on how to handle errors and not just throw them when i feel like it
                 throw error;
             }
         }finally{
-            setisPending(false);
-            setisSettled(true);
+            setStatus("settled");
             options?.onSettled?.();
         }
     }, [mutation]); /* this was a little complicated to follow. to paraphrase
