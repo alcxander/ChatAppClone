@@ -1,67 +1,42 @@
 "use client";
 
-import { useGetChannels } from "@/features/channels/api/use-get-channels";
-import { useCreateChannelModal } from "@/features/channels/store/use-create-channel-modal";
-import { useGetWorkspace } from "@/features/workspaces/api/use-get-workspace";
-
-import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { useGetIndividualChannels } from "@/features/channels/api/use-get-individual-channel";
+import { useChannelId } from "@/hooks/use-channel-id";
 import { Loader, TriangleAlert } from "lucide-react";
-
-import { useRouter } from "next/navigation";
-import { useMemo, useEffect } from "react";
+import { Header } from "./header";
 
 const ChannelIdPage = () => {
-  const workspaceId = useWorkspaceId();
-  const router = useRouter();
+  const channelId = useChannelId();
 
-  const [open, setOpen] = useCreateChannelModal();
+  const { data: channel, isLoading: channelLoading } = useGetIndividualChannels(
+    { id: channelId }
+  );
 
-  const { data: workspace, isLoading: workspaceLoading } = useGetWorkspace({
-    id: workspaceId,
-  });
-  const { data: channels, isLoading: channelsLoading } = useGetChannels({
-    workspaceId,
-  });
-
-  const channelId = useMemo(() => channels?.[0]?._id, [channels]);
-
-  useEffect(() => {
-    if (workspaceLoading || channelsLoading || !workspace) return;
-
-    if (channelId) {
-      router.push(`/workspace/${workspaceId}/channel/${channelId}`);
-    } else if (!open) {
-      setOpen(true);
-    }
-  }, [
-    channelId,
-    channelsLoading,
-    workspaceLoading,
-    workspace,
-    open,
-    setOpen,
-    router,
-    workspaceId,
-  ]);
-
-  if (workspaceLoading || channelsLoading)
+  if (channelLoading) {
+    // this is what they mean when they say an early return. cute idea
     return (
-      <div className="h-full flex-1 flex items-center justify-center flex-col gap-2">
-        <Loader className="size-6 animate-spin text-muted-foreground" />
+      <div className="h-full flex-1 flex items-center justify-center">
+        <Loader className="animate-spin size-5 text-muted-foreground" />
       </div>
     );
+  }
 
-  if (!workspace)
+  if (!channel) {
     return (
-      <div className="h-full flex-1 flex items-center justify-center flex-col gap-2">
-        <TriangleAlert className="size-6 animate-spin text-muted-foreground" />
-        <span className="text-sm text-muted-foreground">
-          Workspace not found
-        </span>
+      <div className="h-full flex-1 flex flex-col gap-y-2 items-center justify-center">
+        <TriangleAlert className="size-5 text-muted-foreground" />
+        <span className="text-sm text-muted-foreground">Channel not found</span>
       </div>
     );
+  }
 
-  return null;
+  return (
+
+    <div className="flex flex-col h-full">
+      <Header title={channel.name}/>
+      Channel Loading...
+    </div>
+  )
 };
 
 export default ChannelIdPage;
