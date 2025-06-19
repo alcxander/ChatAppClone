@@ -3,20 +3,9 @@
 import { useMutation } from "convex/react";
 
 import { api } from "../../../../convex/_generated/api";
-import { v } from "convex/values";
 import { useCallback, useMemo, useState } from "react";
-import { Id } from "../../../../convex/_generated/dataModel";
-import { stat } from "fs";
 
-type RequestType = {
-    body: string, 
-    image?: Id<"_storage">, 
-    workspaceId: Id<"workspaces">,
-    channelId?: Id<"channels">,
-    parentMessageId?: Id<"messages">,
-    conversationId?: Id<"conversations">,
-};
-type ResponseType = Id<"messages"> | null;
+type ResponseType = string | null;
 
 type Options = {
     onSuccess?: (data: ResponseType) => void;
@@ -25,7 +14,7 @@ type Options = {
     throwError?: boolean;
 };
 
-export const useCreateMessage = () => {
+export const useGenerateUploadUrl = () => {
     const [data, setData] = useState<ResponseType>(null);
     const [error, setError] = useState<Error | null>(null);
     const [status, setStatus] = useState<"success" | "error" | "pending" | "settled" | null>(null);
@@ -35,31 +24,34 @@ export const useCreateMessage = () => {
     const isError = useMemo(() => status === "error", [status]);
     const isSettled = useMemo(() => status === "settled", [status]);
 
-    const mutation = useMutation(api.messages.create);
+    const mutation = useMutation(api.upload.generateUploadUrl);
 
-    const mutate = useCallback(async (values: RequestType, options?: Options) => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    const mutate = useCallback(async (values: {}, options?: Options) => {
         try{
             setData(null);
             setError(null);
 
             setStatus("pending");
 
-            const response = await mutation(values);
+            const response = await mutation();
             options?.onSuccess?.(response);
             return response;
         }catch(error){
             setStatus("error");
             options?.onError?.(error as Error);
 
-            if (options?.throwError){ 
+            if (options?.throwError){ //gives choice on whether or not to throw error so upstream they have more control on how to handle errors and not just throw them when i feel like it
                 throw error;
             }
         }finally{
             setStatus("settled");
             options?.onSettled?.();
         }
-    }, [mutation]); 
-    
+    }, [mutation]); /* this was a little complicated to follow. to paraphrase
+    needed to be supported in case i want t ouse this outside somewhere in useeffect somewhere. 
+    want this to be memoized so can safely put it in the dependency array*/
+
     return {
         mutate,
         data, 
