@@ -5,6 +5,7 @@ import { format, isToday, isYesterday } from "date-fns";
 import { Hint } from "./hint";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Thumbnail } from "./thumbnail";
+import { Toolbar } from "./toolbar";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 
@@ -58,7 +59,7 @@ export const Message = ({
 }: MessageProps) => {
   if (isCompact) {
     return (
-      <div className="flex flex-col gap-2 p-1.5 px-3 hover:bg-color-gray-100/60 group relative">
+      <div className="flex flex-col gap-2 p-1.5 px-3 hover:bg-gray-100/60 group relative">
         <div className="flex items-start gap-2">
           <Hint label={formatFullTime(new Date(createdAt))}>
             <button className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 w-[40px] leading-[22px] text-center hover:underline">
@@ -80,7 +81,7 @@ export const Message = ({
   const avatarFallback = authorName.charAt(0).toUpperCase();
 
   return (
-    <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-color-gray-100/60 group relative">
+    <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative">
       <div className="flex items-start gap-2">
         <button>
           <Avatar>
@@ -112,6 +113,17 @@ export const Message = ({
           ) : null}
         </div>
       </div>
+      {!isEditing && (
+        <Toolbar 
+        isAuthor={isAuthor}
+        isPending={false}
+        handleEdit={() => setEditingId(id)}
+        handleThread={()=>{}}
+        handleDelete={()=>{}}
+        handleReaction={()=>{}}
+        hideThreadButton={hideThreadButton}
+        />
+      )}
     </div>
   );
 };
