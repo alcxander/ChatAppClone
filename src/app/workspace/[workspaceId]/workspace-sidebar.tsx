@@ -6,6 +6,7 @@ import { useGetChannels } from "@/features/channels/api/use-get-channels";
 
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { useChannelId } from "@/hooks/use-channel-id";
+import { useMemberId } from "@/hooks/use-member-id";
 
 import {
   AlertTriangle,
@@ -38,6 +39,8 @@ export const WorkspaceSidebar = () => {
   const { data: members, isLoading: membersLoading } = useGetMembers({
     workspaceId,
   });
+
+  const memberId = useMemberId();
 
   if (workspaceLoading || memberLoading) {
     return (
@@ -82,9 +85,10 @@ export const WorkspaceSidebar = () => {
         {members?.map((item) => (
           <UserItem
             key={item._id}
-            id={member._id}
+            id={item._id}
             label={item.user.name}
             image={item.user.image}
+            variant={item._id === memberId ? "active" : "default"}
           />
         ))}
       </WorkspaceSection>
