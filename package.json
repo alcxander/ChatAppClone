@@ -10,7 +10,7 @@
     "reset": "rimraf .next node_modules && bun install && bun run dev"
   },
   "dependencies": {
-    "@auth/core": "^0.39.1",
+    "@auth/core": "^0.37.0",
     "@convex-dev/auth": "^0.0.86",
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
@@ -33,8 +33,8 @@
     "next-themes": "^0.4.6",
     "nuqs": "^2.4.3",
     "quill": "^2.0.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "react-icons": "^5.5.0",
     "react-resizable-panels": "^3.0.2",
     "react-use": "^17.6.0",
