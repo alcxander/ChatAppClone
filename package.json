@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "reset": "rimraf .next node_modules && bun install && bun run dev"
+    "reset": "rimraf .next node_modules && npm install && npm run dev"
   },
   "dependencies": {
     "@auth/core": "^0.37.0",
@@ -33,15 +33,14 @@
     "next-themes": "^0.4.6",
     "nuqs": "^2.4.3",
     "quill": "^2.0.3",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",
     "react-resizable-panels": "^3.0.2",
     "react-use": "^17.6.0",
     "react-verification-input": "^4.2.2",
     "sonner": "^2.0.3",
-    "tailwind-merge": "^3.3.0",
-    "tailwindcss": "^4"
+    "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
