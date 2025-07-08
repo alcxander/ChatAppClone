@@ -24,8 +24,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Slack Clone chat app",
+  title: "Clone chat app of Slack",
   description: "Learning tool used by Dexter",
+  icons: {
+    icon: "./tabheader.svg"
+  }
 };
 
 export default function RootLayout({
@@ -36,6 +39,9 @@ export default function RootLayout({
   return (
     <ConvexAuthNextjsServerProvider>
       <html lang="en">
+        <head>
+          <link rel="icon" href="/tabheader.svg" type="image/svg+xml" />
+        </head>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
